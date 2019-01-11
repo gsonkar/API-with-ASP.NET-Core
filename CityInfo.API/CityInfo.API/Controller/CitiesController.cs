@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controller
@@ -9,7 +8,7 @@ namespace CityInfo.API.Controller
     {
         //The action method should not static : http://www.tutorialsteacher.com/mvc/action-method-in-mvc
 
-        //[HttpGet("api/cities")]
+        [HttpGet]
         //public JsonResult GetCities()
         //{
         //    return new JsonResult(new List<object>
@@ -38,7 +37,6 @@ namespace CityInfo.API.Controller
                 return NotFound();
             }
              return Ok(city);
-            return new JsonResult(city);
         }
     }
 }
