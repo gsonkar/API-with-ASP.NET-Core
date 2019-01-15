@@ -1,7 +1,9 @@
-﻿using CityInfo.API.ResourceManipulation.Services;
+﻿using CityInfo.API.ResourceManipulation.Entities;
+using CityInfo.API.ResourceManipulation.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,11 +34,14 @@ namespace CityInfo.API.ResourceManipulation
             services.AddMvc()
                 .AddMvcOptions(o => o.OutputFormatters.Add(
                     new XmlDataContractSerializerOutputFormatter()));
+
             services.AddTransient<IMailService,LocalMailService>();
+            var connectionString = Startup.Configuration["connectionStrings:cityInfoDbConnectionString"];
+            services.AddDbContext<CityInfoContext>(o => o.UseSqlServer(connectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,ILoggerFactory loggerFactory,CityInfoContext cityInfoContext)
         {
             loggerFactory.AddDebug();
             loggerFactory.AddNLog();
@@ -48,6 +53,9 @@ namespace CityInfo.API.ResourceManipulation
             {
                 app.UseExceptionHandler();
             }
+
+
+            cityInfoContext.EnsureSeedDataForContext();
             //To get status code for the page
             app.UseStatusCodePages();
             app.UseMvc();
